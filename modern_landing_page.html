@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TANTVA — Ethnic Fashion Retail</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        tantva: {
+                            bg: '#F7F3EB',
+                            card: '#EFE8DA',
+                            bronze: '#705030',
+                            gold: '#8C6639',
+                            dark: '#3A2A1A',
+                            muted: '#7A6B5D',
+                            cream: '#FAF8F5'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F7F3EB;
+            color: #3A2A1A;
+        }
+        .arch-frame {
+            border-top-left-radius: 999px;
+            border-top-right-radius: 999px;
+        }
+        .glass-header {
+            background: rgba(247, 243, 235, 0.94);
+            backdrop-filter: blur(12px);
+        }
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px -10px rgba(112, 80, 48, 0.25);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-tantva-dark bg-tantva-bg selection:bg-tantva-bronze selection:text-white">
+
+    <!-- Toast Banner -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-tantva-cream border border-tantva-bronze/30 shadow-2xl px-6 py-4 rounded-2xl flex items-center space-x-4 border-l-4 border-tantva-bronze">
+            <i class="fa-solid fa-gem text-tantva-bronze text-lg"></i>
+            <div>
+                <h4 class="font-serif font-bold text-base text-tantva-dark" id="toast-title">TANTVA Atelier</h4>
+                <p class="text-xs text-tantva-muted" id="toast-msg">Exploring luxury handcrafted ethnic wear.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick View Outfit Modal -->
+    <div id="quick-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden transition-all duration-300">
+        <div class="bg-tantva-cream border border-tantva-bronze/30 rounded-3xl max-w-3xl w-full p-6 sm:p-8 relative shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 w-10 h-10 bg-tantva-card rounded-full flex items-center justify-center text-tantva-dark hover:bg-tantva-bronze hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div id="modal-visual" class="rounded-2xl overflow-hidden border border-tantva-bronze/20 bg-tantva-card h-80 md:h-96 flex items-center justify-center p-4">
+                    <!-- Dynamic Graphic Inserted Here -->
+                </div>
+                <div class="space-y-4 text-left">
+                    <span id="modal-category" class="text-[10px] uppercase font-bold tracking-[0.25em] text-tantva-gold bg-tantva-card px-3 py-1 rounded-full inline-block">Category</span>
+                    <h3 id="modal-title" class="font-serif text-3xl text-tantva-dark">Outfit Name</h3>
+                    <p id="modal-desc" class="text-xs text-tantva-muted leading-relaxed">Detailed outfit description...</p>
+                    <div class="pt-4 border-t border-tantva-bronze/10 flex items-center justify-between">
+                        <span class="text-[11px] uppercase tracking-widest text-tantva-dark font-semibold">Custom Tailoring Available</span>
+                        <button onclick="closeQuickView(); showToast('Enquiry Sent', 'Our styling consultant will contact you!')" class="px-5 py-2.5 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs uppercase font-bold tracking-widest rounded-xl transition-all shadow-md">
+                            Book Consultation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header with Official TANTVA Arch Logo -->
+    <header class="sticky top-0 z-40 w-full glass-header border-b border-tantva-bronze/15">
+        <div class="max-w-7xl mx-auto px-6 h-28 flex items-center justify-between">
+            
+            <button id="menu-btn" class="lg:hidden text-tantva-dark text-xl p-2" aria-label="Toggle menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Brand Logo -->
+            <a href="#" class="flex flex-col items-center group py-2">
+                <!-- Arch motif logo from reference -->
+                <svg class="w-10 h-12 text-tantva-bronze group-hover:scale-105 transition-transform duration-300" viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M 10,120 L 10,50 A 40,40 0 0,1 90,50 L 90,120" />
+                    <path d="M 18,120 L 18,52 A 32,32 0 0,1 82,52 L 82,120" />
+                    <path d="M 50,120 L 50,22" />
+                    <path d="M 50,105 Q 70,85 82,75" />
+                    <path d="M 50,105 Q 30,85 18,75" />
+                    <path d="M 50,85 Q 72,65 82,50" />
+                    <path d="M 50,85 Q 28,65 18,50" />
+                    <path d="M 50,65 Q 70,45 78,32" />
+                    <path d="M 50,65 Q 30,45 22,32" />
+                </svg>
+                <span class="font-serif text-2xl sm:text-3xl font-normal tracking-[0.25em] text-tantva-dark mt-1 uppercase">TANTVA</span>
+                <span class="text-[9px] tracking-[0.35em] text-tantva-gold uppercase -mt-0.5 font-medium">ETHNIC FASHION RETAIL</span>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden lg:flex items-center space-x-8 text-xs font-semibold uppercase tracking-[0.2em] text-tantva-dark">
+                <a href="#kurta-sec" class="hover:text-tantva-gold transition-colors">Kurtas & Kurtis</a>
+                <a href="#casual-sec" class="hover:text-tantva-gold transition-colors">Casual Ethnic</a>
+                <a href="#sherwani-sec" class="hover:text-tantva-gold transition-colors">Sherwanis</a>
+                <a href="#lehenga-sec" class="hover:text-tantva-gold transition-colors">Lehengas</a>
+                <a href="#brand-story" class="hover:text-tantva-gold transition-colors">Brand Story</a>
+            </nav>
+
+            <!-- Utility Icons -->
+            <div class="flex items-center space-x-4 text-tantva-dark">
+                <button onclick="showToast('Search', 'Search for Kurtas, Sherwanis or Lehengas...')" class="p-2 hover:text-tantva-gold transition-colors" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+                <a href="#qrcode" class="p-2 hover:text-tantva-gold transition-colors" title="Store QR Code">
+                    <i class="fa-solid fa-qrcode text-lg"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden px-8 pb-6 pt-2 bg-tantva-bg border-b border-tantva-bronze/20 space-y-4 text-center uppercase tracking-widest text-xs font-semibold text-tantva-dark">
+            <a href="#kurta-sec" class="block py-2">Kurtas & Kurtis</a>
+            <a href="#casual-sec" class="block py-2">Casual Ethnic Wear</a>
+            <a href="#sherwani-sec" class="block py-2">Royal Sherwanis</a>
+            <a href="#lehenga-sec" class="block py-2">Designer Lehengas</a>
+            <a href="#brand-story" class="block py-2">Brand Story</a>
+            <a href="#qrcode" class="block py-2">Store QR Code</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[85vh] flex items-center justify-center py-16 px-6 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            
+            <!-- Hero Text -->
+            <div class="lg:col-span-6 text-center lg:text-left space-y-6">
+                <div class="inline-block px-4 py-1.5 rounded-full border border-tantva-bronze/30 bg-tantva-card text-tantva-bronze text-[11px] tracking-[0.25em] uppercase font-semibold">
+                    Exclusively Handcrafted • No Sarees
+                </div>
+                
+                <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-tantva-dark leading-[1.1]">
+                    Timeless Grace, <br><span class="italic font-serif text-tantva-bronze">Woven Tradition.</span>
+                </h1>
+
+                <p class="text-tantva-muted font-light text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    Discover TANTVA’s signature boutique retail collection. Tailored for discerning tastes across embroidered Kurta & Kurti sets, casual linen tunics, royal wedding sherwanis, and minimalist silk lehengas.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-5 pt-4">
+                    <a href="#collections" class="w-full sm:w-auto px-8 py-4 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs font-bold uppercase tracking-[0.25em] rounded-full shadow-lg transition-all duration-300 text-center">
+                        Explore Collection
+                    </a>
+                    <a href="#qrcode" class="w-full sm:w-auto px-8 py-4 border border-tantva-bronze text-tantva-dark hover:bg-tantva-bronze/10 text-xs font-bold uppercase tracking-[0.25em] rounded-full transition-all duration-300 text-center">
+                        Scan Store QR
+                    </a>
+                </div>
+
+                <div class="pt-6 flex flex-wrap justify-center lg:justify-start gap-6 text-xs text-tantva-muted uppercase tracking-widest font-medium">
+                    <span class="flex items-center"><i class="fa-solid fa-crown text-tantva-gold mr-2"></i> Royalty Grade Fabrics</span>
+                    <span class="flex items-center"><i class="fa-solid fa-scissors text-tantva-gold mr-2"></i> Custom Bespoke Fit</span>
+                </div>
+            </div>
+
+            <!-- Visual Showcase Grid (Matching 4 Uploaded Outfits) -->
+            <div class="lg:col-span-6 grid grid-cols-2 gap-4 sm:gap-6">
+                
+                <div class="space-y-4 sm:space-y-6 pt-6">
+                    <!-- Outfit 1 Card: Royal Blue Kurta -->
+                    <div onclick="openQuickView('1-kurta')" class="arch-frame overflow-hidden shadow-lg border-4 border-white bg-tantva-card relative group cursor-pointer card-hover">
+                        <!-- Custom Royal Blue Kurta Graphic Banner -->
+                        <div class="h-64 sm:h-72 bg-gradient-to-b from-[#1e2b58] to-[#121a38] flex flex-col items-center justify-between p-4 relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            <!-- Scalloped Dupatta SVG Motif -->
+                            <svg class="w-24 h-48 text-[#3b52a0] my-auto relative z-10" viewBox="0 0 100 200" fill="none">
+                                <path d="M 20,20 Q 50,5 80,20 Q 95,50 80,80 L 80,180 Q 50,195 20,180 Z" stroke="#e0c38c" stroke-width="2" fill="#25356e"/>
+                                <path d="M 25,25 Q 50,12 75,25 L 75,175 Q 50,185 25,175 Z" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,2"/>
+                                <circle cx="50" cy="50" r="12" stroke="#e0c38c" stroke-width="1.5"/>
+                            </svg>
+                            <span class="bg-white/95 text-tantva-dark font-serif font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full shadow z-10">1. Royal Kurta Set</span>
+                        </div>
+                    </div>
+
+                    <!-- Outfit 2 Card: Casual Ethnic -->
+                    <div onclick="openQuickView('2-casual')" class="rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-tantva-card relative group cursor-pointer card-hover">
+                        <div class="h-44 sm:h-52 bg-gradient-to-b from-[#dfcfb5] to-[#c7b293] flex flex-col items-center justify-between p-4 relative overflow-hidden">
+                            <svg class="w-20 h-32 text-tantva-dark my-auto opacity-80" viewBox="0 0 100 150" fill="none">
+                                <rect x="25" y="10" width="50" height="130" rx="6" stroke="#705030" stroke-width="2" fill="#eedcc4"/>
+                                <path d="M 40,10 L 60,10 L 60,40 L 40,40 Z" fill="#705030"/>
+                                <line x1="30" y1="100" x2="70" y2="100" stroke="#8C6639" stroke-width="4"/>
+                            </svg>
+                            <span class="bg-white/95 text-tantva-dark font-serif font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full shadow z-10">2. Casual Ethnic</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                    <!-- Outfit 3 Card: Sherwani -->
+                    <div onclick="openQuickView('3-sherwani')" class="rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-tantva-card relative group cursor-pointer card-hover">
+                        <div class="h-44 sm:h-52 bg-gradient-to-b from-[#FAF8F5] to-[#E8E2D5] flex flex-col items-center justify-between p-4 relative overflow-hidden">
+                            <svg class="w-20 h-32 text-tantva-bronze my-auto" viewBox="0 0 100 150" fill="none">
+                                <path d="M 20,20 Q 50,5 80,20 L 80,140 L 20,140 Z" fill="#ffffff" stroke="#705030" stroke-width="1.5"/>
+                                <line x1="50" y1="20" x2="50" y2="140" stroke="#8C6639" stroke-width="2"/>
+                                <circle cx="50" cy="40" r="2" fill="#705030"/>
+                                <circle cx="50" cy="60" r="2" fill="#705030"/>
+                                <circle cx="50" cy="80" r="2" fill="#705030"/>
+                            </svg>
+                            <span class="bg-white/95 text-tantva-dark font-serif font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full shadow z-10">3. Ivory Sherwani</span>
+                        </div>
+                    </div>
+
+                    <!-- Outfit 4 Card: Lehenga -->
+                    <div onclick="openQuickView('4-lehenga')" class="arch-frame overflow-hidden shadow-lg border-4 border-white bg-tantva-card relative group cursor-pointer card-hover">
+                        <div class="h-64 sm:h-72 bg-gradient-to-b from-[#ebdcc7] to-[#d6c1a7] flex flex-col items-center justify-between p-4 relative overflow-hidden">
+                            <svg class="w-24 h-48 text-tantva-dark my-auto" viewBox="0 0 100 200" fill="none">
+                                <!-- Choli Top -->
+                                <path d="M 30,30 L 70,30 L 65,65 L 35,65 Z" fill="#FAF8F5" stroke="#705030" stroke-width="1.5"/>
+                                <!-- Skirt -->
+                                <path d="M 35,75 L 65,75 L 85,180 L 15,180 Z" fill="#F7F3EB" stroke="#705030" stroke-width="1.5"/>
+                                <line x1="15" y1="170" x2="85" y2="170" stroke="#8C6639" stroke-width="3"/>
+                            </svg>
+                            <span class="bg-white/95 text-tantva-dark font-serif font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full shadow z-10">4. Designer Lehenga</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Grid Showcase -->
+    <section id="collections" class="py-24 bg-tantva-card border-y border-tantva-bronze/15">
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-3 mb-16">
+                <span class="text-xs font-bold uppercase tracking-[0.3em] text-tantva-gold">Curated Retail Categories</span>
+                <h2 class="font-serif text-3xl sm:text-5xl text-tantva-dark">The 4 TANTVA Essentials</h2>
+                <p class="text-xs text-tantva-muted">Pure traditional silhouettes. Absolutely no sarees in our catalog.</p>
+                <div class="w-12 h-0.5 bg-tantva-gold mx-auto mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Category 1: Royal Blue Kurta Set -->
+                <div id="kurta-sec" class="bg-tantva-cream rounded-3xl overflow-hidden border border-tantva-bronze/20 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="h-80 bg-[#172242] p-6 flex flex-col items-center justify-center relative cursor-pointer group" onclick="openQuickView('1-kurta')">
+                            <!-- High resolution visual rendering -->
+                            <div class="w-full h-full border-2 border-[#d9b77c]/40 rounded-2xl flex flex-col items-center justify-center p-4 relative">
+                                <i class="fa-solid fa-shirt text-6xl text-[#e3c793] mb-3 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[11px] uppercase tracking-widest text-[#e3c793] font-bold">Royal Blue Silk</span>
+                                <span class="text-[10px] text-stone-300">Scalloped Organza Dupatta</span>
+                            </div>
+                            <span class="absolute top-4 left-4 bg-white text-tantva-dark text-[9px] uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow">Category 1</span>
+                        </div>
+                        <div class="p-6 text-center space-y-2">
+                            <h3 class="font-serif text-2xl text-tantva-dark">Royal Kurta & Kurti Sets</h3>
+                            <p class="text-xs text-tantva-muted leading-relaxed">Embroidered rich royal blue silk suit with scalloped dupatta and tailored trousers.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 text-center">
+                        <button onclick="openQuickView('1-kurta')" class="w-full py-3 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all">
+                            View Outfit Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category 2: Men's Casual Ethnic Wear -->
+                <div id="casual-sec" class="bg-tantva-cream rounded-3xl overflow-hidden border border-tantva-bronze/20 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="h-80 bg-[#dfcfb5] p-6 flex flex-col items-center justify-center relative cursor-pointer group" onclick="openQuickView('2-casual')">
+                            <div class="w-full h-full border-2 border-tantva-bronze/30 rounded-2xl flex flex-col items-center justify-center p-4 relative">
+                                <i class="fa-solid fa-user-tie text-6xl text-tantva-dark mb-3 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[11px] uppercase tracking-widest text-tantva-dark font-bold">Printed Linen Kurta</span>
+                                <span class="text-[10px] text-tantva-muted">Casual Tunic & Pants</span>
+                            </div>
+                            <span class="absolute top-4 left-4 bg-white text-tantva-dark text-[9px] uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow">Category 2</span>
+                        </div>
+                        <div class="p-6 text-center space-y-2">
+                            <h3 class="font-serif text-2xl text-tantva-dark">Casual Ethnic Wear</h3>
+                            <p class="text-xs text-tantva-muted leading-relaxed">Lightweight printed beige linen short/long kurta tunic for men and women.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 text-center">
+                        <button onclick="openQuickView('2-casual')" class="w-full py-3 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all">
+                            View Outfit Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category 3: Royal Sherwani -->
+                <div id="sherwani-sec" class="bg-tantva-cream rounded-3xl overflow-hidden border border-tantva-bronze/20 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="h-80 bg-[#FAF8F5] p-6 flex flex-col items-center justify-center relative cursor-pointer group border-b border-tantva-bronze/10" onclick="openQuickView('3-sherwani')">
+                            <div class="w-full h-full border-2 border-tantva-gold/40 rounded-2xl flex flex-col items-center justify-center p-4 relative">
+                                <i class="fa-solid fa-crown text-6xl text-tantva-gold mb-3 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[11px] uppercase tracking-widest text-tantva-dark font-bold">Ivory Zardozi Sherwani</span>
+                                <span class="text-[10px] text-tantva-muted">Matching Safa Turban</span>
+                            </div>
+                            <span class="absolute top-4 left-4 bg-white text-tantva-dark text-[9px] uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow">Category 3</span>
+                        </div>
+                        <div class="p-6 text-center space-y-2">
+                            <h3 class="font-serif text-2xl text-tantva-dark">Royal Ivory Sherwanis</h3>
+                            <p class="text-xs text-tantva-muted leading-relaxed">Bespoke groom and festive ivory bandhgala sherwani with all-over hand embroidery.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 text-center">
+                        <button onclick="openQuickView('3-sherwani')" class="w-full py-3 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all">
+                            View Outfit Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category 4: Minimalist Beige Lehenga -->
+                <div id="lehenga-sec" class="bg-tantva-cream rounded-3xl overflow-hidden border border-tantva-bronze/20 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="h-80 bg-[#ebdcc7] p-6 flex flex-col items-center justify-center relative cursor-pointer group" onclick="openQuickView('4-lehenga')">
+                            <div class="w-full h-full border-2 border-tantva-bronze/30 rounded-2xl flex flex-col items-center justify-center p-4 relative">
+                                <i class="fa-solid fa-person-dress text-6xl text-tantva-dark mb-3 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[11px] uppercase tracking-widest text-tantva-dark font-bold">Beige Silk Lehenga</span>
+                                <span class="text-[10px] text-tantva-muted">Minimalist Blouse & Skirt</span>
+                            </div>
+                            <span class="absolute top-4 left-4 bg-white text-tantva-dark text-[9px] uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow">Category 4</span>
+                        </div>
+                        <div class="p-6 text-center space-y-2">
+                            <h3 class="font-serif text-2xl text-tantva-dark">Designer Lehengas</h3>
+                            <p class="text-xs text-tantva-muted leading-relaxed">Elegant champagne beige silk flared lehenga set with clean tailored lines.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 text-center">
+                        <button onclick="openQuickView('4-lehenga')" class="w-full py-3 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all">
+                            View Outfit Details
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Story Section -->
+    <section id="brand-story" class="py-24 bg-tantva-bg">
+        <div class="max-w-5xl mx-auto px-6 text-center space-y-8">
+            <svg class="w-12 h-16 text-tantva-bronze mx-auto opacity-80" viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M 10,120 L 10,50 A 40,40 0 0,1 90,50 L 90,120" />
+                <path d="M 50,120 L 50,22" />
+            </svg>
+            <span class="text-xs font-bold uppercase tracking-[0.35em] text-tantva-gold block">The TANTVA Philosophy</span>
+            <h2 class="font-serif text-3xl sm:text-5xl text-tantva-dark font-normal leading-tight">
+                "Where Every Thread Narrates Heritage Without Compromise."
+            </h2>
+            <p class="text-stone-600 font-light text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+                TANTVA was founded on a distinct retail vision: to champion structured, comfortable, and majestic ethnic fashion for modern celebrations. By narrowing our focus explicitly to Kurta sets, Casual Ethnic wear, Royal Sherwanis, and Minimal Lehengas, we guarantee unrivalled fit and craftsmanship.
+            </p>
+        </div>
+    </section>
+
+    <!-- Store QR Code Section -->
+    <section id="qrcode" class="py-20 bg-tantva-card border-t border-tantva-bronze/15">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="bg-tantva-cream p-8 sm:p-12 rounded-3xl shadow-xl text-center space-y-8 border border-tantva-bronze/20">
+                <div class="space-y-2">
+                    <span class="text-xs font-bold uppercase tracking-[0.3em] text-tantva-gold">Interactive Retail QR Code</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl text-tantva-dark">TANTVA Digital Pass</h2>
+                    <p class="text-xs text-tantva-muted max-w-md mx-auto">Scan with your smartphone camera to quickly share or access TANTVA Ethnic Retail on mobile.</p>
+                </div>
+
+                <!-- QR Display Container -->
+                <div class="flex flex-col items-center justify-center space-y-4">
+                    <div class="p-5 bg-white rounded-3xl shadow-md border border-tantva-bronze/20 inline-block">
+                        <div id="qrcode-container" class="w-48 h-48 flex items-center justify-center"></div>
+                    </div>
+                    <span class="text-[11px] font-mono text-tantva-dark bg-white px-5 py-2 rounded-full border border-tantva-bronze/20 shadow-sm" id="current-qr-url">https://tantva-ethnic.com</span>
+                </div>
+
+                <!-- Custom URL Generator -->
+                <div class="max-w-md mx-auto space-y-3 pt-2">
+                    <div class="flex space-x-2">
+                        <input type="text" id="qr-input" value="https://tantva-ethnic.com" class="flex-1 px-4 py-3 rounded-xl bg-white border border-tantva-bronze/30 text-xs focus:outline-none focus:border-tantva-bronze text-tantva-dark">
+                        <button onclick="generateQRCode()" class="px-6 py-3 bg-tantva-bronze hover:bg-tantva-dark text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors">
+                            Update
+                        </button>
+                    </div>
+                    <div class="flex justify-center space-x-6 pt-2 text-xs font-semibold">
+                        <button onclick="copyQRLink()" class="text-tantva-bronze hover:text-tantva-dark transition-colors flex items-center">
+                            <i class="fa-regular fa-copy mr-1.5"></i> Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-tantva-dark text-tantva-bg py-16">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-6 h-8 text-tantva-gold" viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="4">
+                        <path d="M 10,120 L 10,50 A 40,40 0 0,1 90,50 L 90,120" />
+                        <path d="M 50,120 L 50,22" />
+                    </svg>
+                    <span class="font-serif text-2xl tracking-widest text-white uppercase">TANTVA</span>
+                </div>
+                <p class="text-xs text-stone-400 leading-relaxed">
+                    Ethnic Fashion Retail specializing in Kurtas, Casual Wear, Sherwanis, and Lehengas.
+                </p>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <h4 class="font-serif text-sm uppercase tracking-widest text-tantva-gold font-bold">Categories</h4>
+                <ul class="space-y-2 text-stone-300">
+                    <li><a href="#kurta-sec" class="hover:text-white transition-colors">1. Royal Kurta Sets</a></li>
+                    <li><a href="#casual-sec" class="hover:text-white transition-colors">2. Casual Ethnic Wear</a></li>
+                    <li><a href="#sherwani-sec" class="hover:text-white transition-colors">3. Royal Sherwanis</a></li>
+                    <li><a href="#lehenga-sec" class="hover:text-white transition-colors">4. Designer Lehengas</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <h4 class="font-serif text-sm uppercase tracking-widest text-tantva-gold font-bold">Atelier Services</h4>
+                <ul class="space-y-2 text-stone-300">
+                    <li><a href="#" class="hover:text-white transition-colors">Custom Tailoring</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Private Styling Appointment</a></li>
+                    <li><a href="#qrcode" class="hover:text-white transition-colors">Store QR Code</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <h4 class="font-serif text-sm uppercase tracking-widest text-tantva-gold font-bold">Newsletter</h4>
+                <p class="text-stone-400">Subscribe for boutique launch updates.</p>
+                <div class="flex space-x-2 pt-1">
+                    <input type="email" placeholder="Email address" class="px-3 py-2 bg-stone-900 border border-stone-700 rounded-lg text-white text-xs flex-1 focus:outline-none focus:border-tantva-gold">
+                    <button onclick="showToast('Subscribed', 'Thank you for joining TANTVA updates!')" class="px-4 py-2 bg-tantva-gold text-tantva-dark font-bold uppercase rounded-lg text-[10px] tracking-wider hover:bg-white transition-colors">Join</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-stone-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-stone-500 space-y-4 sm:space-y-0">
+            <p>&copy; 2026 TANTVA Ethnic Fashion Retail. All rights reserved.</p>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-stone-300">Privacy Policy</a>
+                <a href="#" class="hover:text-stone-300">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Data matching the exact 4 uploaded outfit items
+        const outfitData = {
+            '1-kurta': {
+                title: 'Royal Blue Kurta Set with Scalloped Dupatta',
+                category: 'Category 1: Kurta Sets',
+                desc: 'A rich royal blue embroidered silk suit featuring V-neck embroidery, straight-fit matching pants, and a sheer organza scalloped border dupatta.',
+                htmlVisual: `<div class="bg-[#172242] w-full h-full rounded-xl flex flex-col items-center justify-center p-6 text-center"><i class="fa-solid fa-shirt text-6xl text-[#e3c793] mb-3"></i><h4 class="text-white font-serif text-xl">Royal Blue Kurta Set</h4><p class="text-[#e3c793] text-xs mt-1">V-Neck Silk • Scalloped Dupatta</p></div>`
+            },
+            '2-casual': {
+                title: 'Beige Printed Men\'s Casual Ethnic Kurta',
+                category: 'Category 2: Casual Ethnic Wear',
+                desc: 'A lightweight printed linen short kurta for men featuring traditional arch motifs, bandhgala collar, and crisp white trousers.',
+                htmlVisual: `<div class="bg-[#dfcfb5] w-full h-full rounded-xl flex flex-col items-center justify-center p-6 text-center"><i class="fa-solid fa-user-tie text-6xl text-tantva-dark mb-3"></i><h4 class="text-tantva-dark font-serif text-xl">Casual Printed Kurta</h4><p class="text-tantva-muted text-xs mt-1">Beige Linen • Geometric Motifs</p></div>`
+            },
+            '3-sherwani': {
+                title: 'Regal Ivory Zardozi Hand-Embroidered Sherwani',
+                category: 'Category 3: Royal Sherwanis',
+                desc: 'An opulent ivory bandhgala sherwani jacket for grooms and grand occasions, decorated with intricate all-over threadwork, safa turban, and stole.',
+                htmlVisual: `<div class="bg-[#FAF8F5] border border-tantva-bronze/20 w-full h-full rounded-xl flex flex-col items-center justify-center p-6 text-center"><i class="fa-solid fa-crown text-6xl text-tantva-gold mb-3"></i><h4 class="text-tantva-dark font-serif text-xl">Ivory Zardozi Sherwani</h4><p class="text-tantva-gold text-xs mt-1">Bandhgala • Turban & Stole Set</p></div>`
+            },
+            '4-lehenga': {
+                title: 'Minimalist Champagne Beige Silk Lehenga',
+                category: 'Category 4: Designer Lehengas',
+                desc: 'A clean, high-fashion beige silk lehenga skirt paired with a fitted elbow-sleeve blouse and delicate hemline embroidery.',
+                htmlVisual: `<div class="bg-[#ebdcc7] w-full h-full rounded-xl flex flex-col items-center justify-center p-6 text-center"><i class="fa-solid fa-person-dress text-6xl text-tantva-dark mb-3"></i><h4 class="text-tantva-dark font-serif text-xl">Champagne Beige Lehenga</h4><p class="text-tantva-muted text-xs mt-1">Silk Satin • Minimalist Choli</p></div>`
+            }
+        };
+
+        // Quick View Modal Controls
+        function openQuickView(id) {
+            const outfit = outfitData[id];
+            if (outfit) {
+                document.getElementById('modal-visual').innerHTML = outfit.htmlVisual;
+                document.getElementById('modal-title').innerText = outfit.title;
+                document.getElementById('modal-category').innerText = outfit.category;
+                document.getElementById('modal-desc').innerText = outfit.desc;
+                document.getElementById('quick-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeQuickView() {
+            document.getElementById('quick-modal').classList.add('hidden');
+        }
+
+        // Toast Popup
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // QR Code Generator using QRCodeJS
+        function renderQR(url) {
+            const container = document.getElementById('qrcode-container');
+            container.innerHTML = "";
+            new QRCode(container, {
+                text: url,
+                width: 180,
+                height: 180,
+                colorDark: "#3A2A1A",
+                colorLight: "#FAF8F5",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('current-qr-url').innerText = url;
+        }
+
+        function generateQRCode() {
+            const val = document.getElementById('qr-input').value.trim();
+            if (val) {
+                renderQR(val);
+                showToast('QR Updated', 'Generated QR code for: ' + val);
+            }
+        }
+
+        function copyQRLink() {
+            const link = document.getElementById('current-qr-url').innerText;
+            const tempInput = document.createElement("input");
+            tempInput.value = link;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast('Copied to Clipboard!', link);
+        }
+
+        // Render default QR Code on load
+        window.addEventListener('load', () => {
+            renderQR("https://tantva-ethnic.com");
+        });
+    </script>
+</body>
+</html>
